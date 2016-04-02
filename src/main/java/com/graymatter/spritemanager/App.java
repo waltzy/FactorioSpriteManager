@@ -27,7 +27,6 @@ public class App
 			public void run() {
 				mw = new WorkspaceDialouge();
 				mw.setVisible(true);
-				//mw.updateImage();
 			}
 		});
 		
