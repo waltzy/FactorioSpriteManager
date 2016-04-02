@@ -15,12 +15,20 @@ public class WorkspaceManager {
 	private WorkspaceManager() throws ProjectSetupException{
 		File wsfile = new File("./workspaces");
 		SMFileUtils.ensureJson(wsfile, new Workspaces());
-		//SMFileUtils.getJson(file, clazz)
+		setWorkspaces((Workspaces) SMFileUtils.getJson(wsfile.getAbsolutePath(), Workspaces.class));
 	}
 	
 	public static WorkspaceManager getInstance() throws ProjectSetupException{
 		if (_instance==null) _instance = new WorkspaceManager();
 		return _instance;
+	}
+
+	public Workspaces getWorkspaces() {
+		return workspaces;
+	}
+
+	public void setWorkspaces(Workspaces workspaces) {
+		this.workspaces = workspaces;
 	}
 	
 	

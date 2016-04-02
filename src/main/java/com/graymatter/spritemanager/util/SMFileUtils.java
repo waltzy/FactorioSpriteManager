@@ -85,8 +85,12 @@ public class SMFileUtils {
 		}
 	}
 	
-	public static Object getJson(String file, Class<?> clazz) throws JsonSyntaxException, IOException{
-		return new Gson().fromJson(readFile(file), clazz);
+	public static Object getJson(String file, Class<?> clazz) throws ProjectSetupException{
+		try {
+			return new Gson().fromJson(readFile(file), clazz);
+		} catch (JsonSyntaxException | IOException e) {
+			throw new ProjectSetupException(e.getMessage());
+		}
 	}
 	
 }
