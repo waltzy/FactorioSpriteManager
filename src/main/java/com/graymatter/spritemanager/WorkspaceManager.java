@@ -41,6 +41,10 @@ public class WorkspaceManager {
 		}
 	}
 
+	public Project getProject(Workspace workspace) throws ProjectSetupException{
+		return Project.getProject(workspace);
+	}
+	
 	public Workspace[] getWorkspaceList(){
 		return workspaces.getWorkspaces();
 	}

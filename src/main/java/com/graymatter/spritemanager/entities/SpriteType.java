@@ -1,5 +1,5 @@
 package com.graymatter.spritemanager.entities;
 
-public enum SpriteTypes {
+public enum SpriteType {
 	BUILDING, VEHICLE, ROTATABLE_BUILDING
 }

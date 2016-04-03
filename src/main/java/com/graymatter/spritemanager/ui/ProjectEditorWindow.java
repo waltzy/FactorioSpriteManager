@@ -1,27 +1,34 @@
 package com.graymatter.spritemanager.ui;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.GridBagLayout;
-import javax.swing.JList;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JLabel;
-import java.awt.FlowLayout;
-import javax.swing.JButton;
 import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JTextField;
-import javax.swing.JSeparator;
-import javax.swing.border.EtchedBorder;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+
+import com.graymatter.spritemanager.ConsoleOutputStream;
+import com.graymatter.spritemanager.Project;
+import com.graymatter.spritemanager.entities.ManagedSprite;
+import java.awt.Font;
 
 public class ProjectEditorWindow extends JFrame {
 
@@ -31,6 +38,7 @@ public class ProjectEditorWindow extends JFrame {
 	private JTextField textField_2;
 	private JTextField textField_3;
 	private JTextField textField_4;
+	private JTextField textField_5;
 
 	/**
 	 * Launch the application.
@@ -48,9 +56,35 @@ public class ProjectEditorWindow extends JFrame {
 		});
 	}
 
+	private Project project;
+	private JList<ManagedSprite> managedSpritesList;
+	private JPanel stripesViewerPanel;
+	private JPanel spriteViewerPanel;
+	private JList tilesList;
+	private JPanel managedSpriteDetails;
+	private JPanel tilesPanel;
+	private JPanel stripesPanel;
+	private JPanel consolePanel;
+	private JPanel tileViewPanel;
+	private JPanel spriteListPanel;
+	
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	public void updateManagedSprites(){
+		
+		DefaultListModel<ManagedSprite> model = (DefaultListModel<ManagedSprite>) managedSpritesList.getModel();
+		model.removeAllElements();
+		for (ManagedSprite me :  project.getManagedEntities().getSprites()){
+			model.addElement(me);
+		}
+	}
+	
 	/**
 	 * Create the frame.
 	 */
+	@SuppressWarnings("resource")
 	public ProjectEditorWindow() {
 		UIUtils.setIcon(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,7 +99,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbl_contentPane.rowWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
-		JPanel spriteListPanel = new JPanel();
+		spriteListPanel = new JPanel();
 		spriteListPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagConstraints gbc_spriteListPanel = new GridBagConstraints();
 		gbc_spriteListPanel.insets = new Insets(0, 0, 5, 5);
@@ -97,20 +131,27 @@ public class ProjectEditorWindow extends JFrame {
 		managedSpritesMenuPanel.add(horizontalGlue);
 		
 		JButton btnNew = new JButton("New");
+		btnNew.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				CreateManagedEntity dialog = new CreateManagedEntity(ProjectEditorWindow.this, true);
+				dialog.setVisible(true);
+			}
+		});
 		managedSpritesMenuPanel.add(btnNew);
 		
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.setEnabled(false);
 		managedSpritesMenuPanel.add(btnDelete);
 		
-		JList list = new JList();
-		GridBagConstraints gbc_list = new GridBagConstraints();
-		gbc_list.fill = GridBagConstraints.BOTH;
-		gbc_list.gridx = 0;
-		gbc_list.gridy = 1;
-		spriteListPanel.add(list, gbc_list);
+		managedSpritesList = new JList();
+		managedSpritesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		GridBagConstraints gbc_managedSpritesList = new GridBagConstraints();
+		gbc_managedSpritesList.fill = GridBagConstraints.BOTH;
+		gbc_managedSpritesList.gridx = 0;
+		gbc_managedSpritesList.gridy = 1;
+		spriteListPanel.add(managedSpritesList, gbc_managedSpritesList);
 		
-		JPanel managedSpriteDetails = new JPanel();
+		managedSpriteDetails = new JPanel();
 		managedSpriteDetails.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagConstraints gbc_managedSpriteDetails = new GridBagConstraints();
 		gbc_managedSpriteDetails.insets = new Insets(0, 0, 5, 5);
@@ -145,17 +186,36 @@ public class ProjectEditorWindow extends JFrame {
 		managedSpriteDetails.add(panel_1, gbc_panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_1.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		panel_1.setLayout(gbl_panel_1);
+		
+		JLabel lblManagedSpriteName = new JLabel("Managed Sprite Name");
+		GridBagConstraints gbc_lblManagedSpriteName = new GridBagConstraints();
+		gbc_lblManagedSpriteName.anchor = GridBagConstraints.EAST;
+		gbc_lblManagedSpriteName.insets = new Insets(5, 5, 5, 5);
+		gbc_lblManagedSpriteName.gridx = 0;
+		gbc_lblManagedSpriteName.gridy = 0;
+		panel_1.add(lblManagedSpriteName, gbc_lblManagedSpriteName);
+		
+		textField_5 = new JTextField();
+		textField_5.setEditable(false);
+		textField_5.setColumns(10);
+		GridBagConstraints gbc_textField_5 = new GridBagConstraints();
+		gbc_textField_5.gridwidth = 2;
+		gbc_textField_5.insets = new Insets(5, 5, 5, 0);
+		gbc_textField_5.fill = GridBagConstraints.HORIZONTAL;
+		gbc_textField_5.gridx = 1;
+		gbc_textField_5.gridy = 0;
+		panel_1.add(textField_5, gbc_textField_5);
 		
 		JLabel lblType = new JLabel("Sprite Type");
 		GridBagConstraints gbc_lblType = new GridBagConstraints();
 		gbc_lblType.insets = new Insets(5, 5, 5, 5);
 		gbc_lblType.anchor = GridBagConstraints.EAST;
 		gbc_lblType.gridx = 0;
-		gbc_lblType.gridy = 0;
+		gbc_lblType.gridy = 1;
 		panel_1.add(lblType, gbc_lblType);
 		
 		JComboBox comboBox = new JComboBox();
@@ -164,7 +224,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_comboBox.insets = new Insets(5, 5, 5, 0);
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 0;
+		gbc_comboBox.gridy = 1;
 		panel_1.add(comboBox, gbc_comboBox);
 		
 		JLabel lblModassetpath = new JLabel("Mod Asset Path");
@@ -172,7 +232,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_lblModassetpath.anchor = GridBagConstraints.EAST;
 		gbc_lblModassetpath.insets = new Insets(5, 5, 5, 5);
 		gbc_lblModassetpath.gridx = 0;
-		gbc_lblModassetpath.gridy = 1;
+		gbc_lblModassetpath.gridy = 2;
 		panel_1.add(lblModassetpath, gbc_lblModassetpath);
 		
 		textField = new JTextField();
@@ -182,7 +242,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_textField.insets = new Insets(5, 5, 5, 0);
 		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField.gridx = 1;
-		gbc_textField.gridy = 1;
+		gbc_textField.gridy = 2;
 		panel_1.add(textField, gbc_textField);
 		textField.setColumns(10);
 		
@@ -191,7 +251,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_lblWorkingAssetPath.anchor = GridBagConstraints.EAST;
 		gbc_lblWorkingAssetPath.insets = new Insets(5, 5, 5, 5);
 		gbc_lblWorkingAssetPath.gridx = 0;
-		gbc_lblWorkingAssetPath.gridy = 2;
+		gbc_lblWorkingAssetPath.gridy = 3;
 		panel_1.add(lblWorkingAssetPath, gbc_lblWorkingAssetPath);
 		
 		textField_1 = new JTextField();
@@ -201,14 +261,14 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_textField_1.insets = new Insets(5, 5, 5, 5);
 		gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_1.gridx = 1;
-		gbc_textField_1.gridy = 2;
+		gbc_textField_1.gridy = 3;
 		panel_1.add(textField_1, gbc_textField_1);
 		
 		JButton btnChangeUpdate = new JButton("Change");
 		GridBagConstraints gbc_btnChangeUpdate = new GridBagConstraints();
 		gbc_btnChangeUpdate.insets = new Insets(5, 5, 5, 0);
 		gbc_btnChangeUpdate.gridx = 2;
-		gbc_btnChangeUpdate.gridy = 2;
+		gbc_btnChangeUpdate.gridy = 3;
 		panel_1.add(btnChangeUpdate, gbc_btnChangeUpdate);
 		
 		JLabel lblLuaLibPath = new JLabel("LUA lib Path");
@@ -216,7 +276,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_lblLuaLibPath.anchor = GridBagConstraints.EAST;
 		gbc_lblLuaLibPath.insets = new Insets(5, 5, 5, 5);
 		gbc_lblLuaLibPath.gridx = 0;
-		gbc_lblLuaLibPath.gridy = 3;
+		gbc_lblLuaLibPath.gridy = 4;
 		panel_1.add(lblLuaLibPath, gbc_lblLuaLibPath);
 		
 		textField_2 = new JTextField();
@@ -227,7 +287,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_textField_2.insets = new Insets(5, 5, 5, 0);
 		gbc_textField_2.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_2.gridx = 1;
-		gbc_textField_2.gridy = 3;
+		gbc_textField_2.gridy = 4;
 		panel_1.add(textField_2, gbc_textField_2);
 		
 		JLabel lblItemName = new JLabel("Item Name");
@@ -235,7 +295,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_lblItemName.anchor = GridBagConstraints.EAST;
 		gbc_lblItemName.insets = new Insets(5, 5, 5, 5);
 		gbc_lblItemName.gridx = 0;
-		gbc_lblItemName.gridy = 4;
+		gbc_lblItemName.gridy = 5;
 		panel_1.add(lblItemName, gbc_lblItemName);
 		
 		textField_3 = new JTextField();
@@ -244,7 +304,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_textField_3.insets = new Insets(5, 5, 5, 5);
 		gbc_textField_3.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_3.gridx = 1;
-		gbc_textField_3.gridy = 4;
+		gbc_textField_3.gridy = 5;
 		panel_1.add(textField_3, gbc_textField_3);
 		
 		JButton btnEdit = new JButton("Update");
@@ -252,7 +312,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_btnEdit.insets = new Insets(5, 5, 5, 0);
 		gbc_btnEdit.fill = GridBagConstraints.BOTH;
 		gbc_btnEdit.gridx = 2;
-		gbc_btnEdit.gridy = 4;
+		gbc_btnEdit.gridy = 5;
 		panel_1.add(btnEdit, gbc_btnEdit);
 		
 		JSeparator separator = new JSeparator();
@@ -260,7 +320,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_separator.insets = new Insets(5, 5, 5, 0);
 		gbc_separator.gridwidth = 3;
 		gbc_separator.gridx = 0;
-		gbc_separator.gridy = 5;
+		gbc_separator.gridy = 6;
 		panel_1.add(separator, gbc_separator);
 		
 		JLabel lblFilePattern = new JLabel("File Pattern");
@@ -269,7 +329,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_lblFilePattern.anchor = GridBagConstraints.EAST;
 		gbc_lblFilePattern.insets = new Insets(0, 5, 5, 5);
 		gbc_lblFilePattern.gridx = 0;
-		gbc_lblFilePattern.gridy = 6;
+		gbc_lblFilePattern.gridy = 7;
 		panel_1.add(lblFilePattern, gbc_lblFilePattern);
 		
 		textField_4 = new JTextField();
@@ -278,7 +338,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_textField_4.insets = new Insets(0, 5, 5, 0);
 		gbc_textField_4.fill = GridBagConstraints.HORIZONTAL;
 		gbc_textField_4.gridx = 1;
-		gbc_textField_4.gridy = 6;
+		gbc_textField_4.gridy = 7;
 		panel_1.add(textField_4, gbc_textField_4);
 		textField_4.setColumns(10);
 		
@@ -286,7 +346,7 @@ public class ProjectEditorWindow extends JFrame {
 		GridBagConstraints gbc_verticalStrut = new GridBagConstraints();
 		gbc_verticalStrut.insets = new Insets(0, 0, 5, 5);
 		gbc_verticalStrut.gridx = 1;
-		gbc_verticalStrut.gridy = 7;
+		gbc_verticalStrut.gridy = 8;
 		panel_1.add(verticalStrut, gbc_verticalStrut);
 		
 		JPanel panel_9 = new JPanel();
@@ -294,7 +354,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_panel_9.gridwidth = 3;
 		gbc_panel_9.fill = GridBagConstraints.BOTH;
 		gbc_panel_9.gridx = 0;
-		gbc_panel_9.gridy = 8;
+		gbc_panel_9.gridy = 9;
 		panel_1.add(panel_9, gbc_panel_9);
 		panel_9.setLayout(new BoxLayout(panel_9, BoxLayout.X_AXIS));
 		
@@ -319,21 +379,21 @@ public class ProjectEditorWindow extends JFrame {
 		Component horizontalGlue_2 = Box.createHorizontalGlue();
 		panel_9.add(horizontalGlue_2);
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		GridBagConstraints gbc_panel = new GridBagConstraints();
-		gbc_panel.gridheight = 2;
-		gbc_panel.insets = new Insets(5, 5, 5, 5);
-		gbc_panel.fill = GridBagConstraints.BOTH;
-		gbc_panel.gridx = 2;
-		gbc_panel.gridy = 0;
-		contentPane.add(panel, gbc_panel);
-		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0};
-		gbl_panel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		panel.setLayout(gbl_panel);
+		tilesPanel = new JPanel();
+		tilesPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		GridBagConstraints gbc_tilesPanel = new GridBagConstraints();
+		gbc_tilesPanel.gridheight = 2;
+		gbc_tilesPanel.insets = new Insets(5, 5, 5, 5);
+		gbc_tilesPanel.fill = GridBagConstraints.BOTH;
+		gbc_tilesPanel.gridx = 2;
+		gbc_tilesPanel.gridy = 0;
+		contentPane.add(tilesPanel, gbc_tilesPanel);
+		GridBagLayout gbl_tilesPanel = new GridBagLayout();
+		gbl_tilesPanel.columnWidths = new int[]{0, 0};
+		gbl_tilesPanel.rowHeights = new int[]{0, 0, 0};
+		gbl_tilesPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_tilesPanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		tilesPanel.setLayout(gbl_tilesPanel);
 		
 		JPanel panel_2 = new JPanel();
 		GridBagConstraints gbc_panel_2 = new GridBagConstraints();
@@ -341,19 +401,20 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_panel_2.fill = GridBagConstraints.BOTH;
 		gbc_panel_2.gridx = 0;
 		gbc_panel_2.gridy = 0;
-		panel.add(panel_2, gbc_panel_2);
+		tilesPanel.add(panel_2, gbc_panel_2);
 		
 		JLabel lblTiles = new JLabel("Tiles");
 		panel_2.add(lblTiles);
 		
-		JList list_1 = new JList();
-		GridBagConstraints gbc_list_1 = new GridBagConstraints();
-		gbc_list_1.fill = GridBagConstraints.BOTH;
-		gbc_list_1.gridx = 0;
-		gbc_list_1.gridy = 1;
-		panel.add(list_1, gbc_list_1);
+		tilesList = new JList();
+		tilesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		GridBagConstraints gbc_tilesList = new GridBagConstraints();
+		gbc_tilesList.fill = GridBagConstraints.BOTH;
+		gbc_tilesList.gridx = 0;
+		gbc_tilesList.gridy = 1;
+		tilesPanel.add(tilesList, gbc_tilesList);
 		
-		JPanel stripesPanel = new JPanel();
+		stripesPanel = new JPanel();
 		stripesPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagConstraints gbc_stripesPanel = new GridBagConstraints();
 		gbc_stripesPanel.gridheight = 2;
@@ -380,28 +441,28 @@ public class ProjectEditorWindow extends JFrame {
 		JLabel lblStripes = new JLabel("Stripes");
 		panel_3.add(lblStripes);
 		
-		JPanel panel_4 = new JPanel();
-		GridBagConstraints gbc_panel_4 = new GridBagConstraints();
-		gbc_panel_4.fill = GridBagConstraints.BOTH;
-		gbc_panel_4.gridx = 0;
-		gbc_panel_4.gridy = 1;
-		stripesPanel.add(panel_4, gbc_panel_4);
+		stripesViewerPanel = new JPanel();
+		GridBagConstraints gbc_stripesViewerPanel = new GridBagConstraints();
+		gbc_stripesViewerPanel.fill = GridBagConstraints.BOTH;
+		gbc_stripesViewerPanel.gridx = 0;
+		gbc_stripesViewerPanel.gridy = 1;
+		stripesPanel.add(stripesViewerPanel, gbc_stripesViewerPanel);
 		
-		JPanel panel_5 = new JPanel();
-		panel_5.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
-		GridBagConstraints gbc_panel_5 = new GridBagConstraints();
-		gbc_panel_5.gridheight = 2;
-		gbc_panel_5.insets = new Insets(0, 0, 0, 5);
-		gbc_panel_5.fill = GridBagConstraints.BOTH;
-		gbc_panel_5.gridx = 1;
-		gbc_panel_5.gridy = 1;
-		contentPane.add(panel_5, gbc_panel_5);
-		GridBagLayout gbl_panel_5 = new GridBagLayout();
-		gbl_panel_5.columnWidths = new int[]{0, 0};
-		gbl_panel_5.rowHeights = new int[]{0, 0, 0};
-		gbl_panel_5.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-		gbl_panel_5.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		panel_5.setLayout(gbl_panel_5);
+		consolePanel = new JPanel();
+		consolePanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
+		GridBagConstraints gbc_consolePanel = new GridBagConstraints();
+		gbc_consolePanel.gridheight = 2;
+		gbc_consolePanel.insets = new Insets(0, 0, 0, 5);
+		gbc_consolePanel.fill = GridBagConstraints.BOTH;
+		gbc_consolePanel.gridx = 1;
+		gbc_consolePanel.gridy = 1;
+		contentPane.add(consolePanel, gbc_consolePanel);
+		GridBagLayout gbl_consolePanel = new GridBagLayout();
+		gbl_consolePanel.columnWidths = new int[]{0, 0};
+		gbl_consolePanel.rowHeights = new int[]{0, 0, 0};
+		gbl_consolePanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gbl_consolePanel.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
+		consolePanel.setLayout(gbl_consolePanel);
 		
 		JPanel panel_6 = new JPanel();
 		GridBagConstraints gbc_panel_6 = new GridBagConstraints();
@@ -409,19 +470,23 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_panel_6.fill = GridBagConstraints.BOTH;
 		gbc_panel_6.gridx = 0;
 		gbc_panel_6.gridy = 0;
-		panel_5.add(panel_6, gbc_panel_6);
+		consolePanel.add(panel_6, gbc_panel_6);
 		
 		JLabel lblConsole = new JLabel("Console");
 		panel_6.add(lblConsole);
 		
-		JTextArea textArea = new JTextArea();
-		GridBagConstraints gbc_textArea = new GridBagConstraints();
-		gbc_textArea.fill = GridBagConstraints.BOTH;
-		gbc_textArea.gridx = 0;
-		gbc_textArea.gridy = 1;
-		panel_5.add(textArea, gbc_textArea);
+		JScrollPane scrollPane = new JScrollPane();
+		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
+		gbc_scrollPane.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane.gridx = 0;
+		gbc_scrollPane.gridy = 1;
+		consolePanel.add(scrollPane, gbc_scrollPane);
 		
-		JPanel tileViewPanel = new JPanel();
+		JTextArea consoleTextArea = new JTextArea();
+		consoleTextArea.setFont(new Font("Monospaced", Font.PLAIN, 10));
+		scrollPane.setViewportView(consoleTextArea);
+		
+		tileViewPanel = new JPanel();
 		tileViewPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		GridBagConstraints gbc_tileViewPanel = new GridBagConstraints();
 		gbc_tileViewPanel.fill = GridBagConstraints.BOTH;
@@ -452,12 +517,31 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_horizontalStrut_2.gridy = 1;
 		tileViewPanel.add(horizontalStrut_2, gbc_horizontalStrut_2);
 		
-		JPanel panel_8 = new JPanel();
-		GridBagConstraints gbc_panel_8 = new GridBagConstraints();
-		gbc_panel_8.fill = GridBagConstraints.BOTH;
-		gbc_panel_8.gridx = 0;
-		gbc_panel_8.gridy = 2;
-		tileViewPanel.add(panel_8, gbc_panel_8);
+		spriteViewerPanel = new JPanel();
+		GridBagConstraints gbc_spriteViewerPanel = new GridBagConstraints();
+		gbc_spriteViewerPanel.fill = GridBagConstraints.BOTH;
+		gbc_spriteViewerPanel.gridx = 0;
+		gbc_spriteViewerPanel.gridy = 2;
+		tileViewPanel.add(spriteViewerPanel, gbc_spriteViewerPanel);
+		
+		
+		
+		managedSpriteSelected(false);
+		new ConsoleOutputStream(consoleTextArea);
+		
 	}
+	
+	public void managedSpriteSelected(boolean val){
+		UIUtils.setPanelEnabled(managedSpriteDetails, val);;
+		UIUtils.setPanelEnabled(tilesPanel, val);;
+		UIUtils.setPanelEnabled(stripesPanel, val);;
+		UIUtils.setPanelEnabled(tileViewPanel, val);;
+	}
+
+	public Project getProject() {
+		return project;
+	}
+
+
 
 }

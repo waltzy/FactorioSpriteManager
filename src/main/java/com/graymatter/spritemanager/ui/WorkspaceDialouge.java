@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 
+import com.graymatter.spritemanager.Project;
 import com.graymatter.spritemanager.WorkspaceManager;
 import com.graymatter.spritemanager.entities.Workspace;
 import com.graymatter.spritemanager.exceptions.ProjectSetupException;
@@ -57,7 +58,17 @@ public class WorkspaceDialouge extends JFrame {
 		JButton btnSelect = new JButton("Select");
 		btnSelect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				if (comboBox.getSelectedItem() == null) UIUtils.showError(new Exception("No Workspace Selected"), WorkspaceDialouge.this);
+				try {
+					Project project = WorkspaceManager.getInstance().getProject((Workspace)comboBox.getSelectedItem());
+					System.out.println("Selected "+project.getWorkingDirectory().getAbsolutePath());
+					ProjectEditorWindow pew = new ProjectEditorWindow();
+					pew.setProject(project);
+					pew.setVisible(true);
+					WorkspaceDialouge.this.dispose();
+				} catch (ProjectSetupException e1) {
+					UIUtils.showError(e1, WorkspaceDialouge.this);
+				}
 			}
 		});
 		GridBagConstraints gbc_btnSelect = new GridBagConstraints();

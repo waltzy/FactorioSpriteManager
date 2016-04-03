@@ -2,13 +2,13 @@ package com.graymatter.spritemanager.entities;
 
 public class SpriteManagerManagedEntities {
 
-	private String[] sprites = new String[0];
+	private ManagedSprite[] sprites = new ManagedSprite[0];
 
-	public String[] getSprites() {
+	public ManagedSprite[] getSprites() {
 		return sprites;
 	}
 
-	public void setSprites(String[] sprites) {
+	public void setSprites(ManagedSprite[] sprites) {
 		this.sprites = sprites;
 	}
 	

@@ -13,17 +13,29 @@ import com.graymatter.spritemanager.util.SMFileUtils;
 
 public class Project {
 
-	private static Project _instance;
 	private ProjectInfo projectInfo;
 	private File projectDirectory;
 	private File graphicsDirectory;
 	private File graphicsDefinitionDirectory;
 	private File includeLib;
 	private File workingDirectory;
+	private File managedEntityFile;
+	private File infoFile;
 	private SpriteManagerManagedEntities managedEntities;
 
 	public static void main(String[] args) throws ProjectSetupException{
 		new Project(new Workspace("C:\\Users\\Waltzy\\AppData\\Roaming\\Factorio\\mods\\BomberTutorial_0.1.1", "C:\\Users\\Waltzy\\testWorkspace"));
+	}
+	
+	public String getRelativetoGraphicsPath(String text) throws ProjectSetupException {
+		String out = graphicsDirectory.toURI().relativize(new File(text).toURI()).getPath();
+		if (out.startsWith("/")||out.startsWith("\\")) throw new ProjectSetupException("The chosen Directory is outside the Graphics Path");
+		return out;
+	}
+	public String getRelativetoWorkingDirectory(String text) throws ProjectSetupException {
+		String out = workingDirectory.toURI().relativize(new File(text).toURI()).getPath();
+		if (out.startsWith("/")||out.startsWith("\\")) throw new ProjectSetupException("The chosen Directory is outside the Working Directory");
+		return out;
 	}
 	
 	private Project(Workspace workspace) throws ProjectSetupException {
@@ -35,11 +47,11 @@ public class Project {
 			throw new ProjectSetupException(
 					"Project base Directory (" + workspace.getModBaseDirectory() + ")Does Not Exist");
 		
-		File info = new File(projectDirectory.getAbsolutePath() + "/info.json");
-		File managedSprites = new File(projectDirectory.getAbsolutePath() + "/managedSprites.json");
+		infoFile = new File(projectDirectory.getAbsolutePath() + "/info.json");
+		managedEntityFile = new File(projectDirectory.getAbsolutePath() + "/managedSprites.json");
 		
-		SMFileUtils.ensureJson(info, new ProjectInfo());
-		SMFileUtils.ensureJson(managedSprites, new SpriteManagerManagedEntities());		
+		SMFileUtils.ensureJson(infoFile, new ProjectInfo());
+		SMFileUtils.ensureJson(managedEntityFile, new SpriteManagerManagedEntities());		
 		
 		
 		
@@ -62,19 +74,14 @@ public class Project {
 
 	}
 
-	
-
-	public static void init(Workspace workspace) throws ProjectSetupException {
-		_instance = new Project(workspace);
+	public void saveManagedSprites() throws ProjectSetupException{
+		SMFileUtils.writeJson(managedEntityFile, managedEntities);
 	}
 
-	public static Project getInstance() throws ProjectSetupException {
-		if (_instance == null)
-			throw new ProjectSetupException("Project must be initilised first with Project.init(\"/ModPath\")");
-		return _instance;
+	public static Project getProject(Workspace workspace) throws ProjectSetupException {
+		return new Project(workspace);
 	}
 
-	
 
 	public ProjectInfo getProjectInfo() {
 		return projectInfo;
@@ -131,4 +138,8 @@ public class Project {
 	public void setIncludeLib(File includeLib) {
 		this.includeLib = includeLib;
 	}
+
+
+
+
 }

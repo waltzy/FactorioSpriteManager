@@ -7,6 +7,8 @@ public class Workspace {
 	public Workspace(String modDir, String assetDir) {
 		this.modBaseDirectory = modDir;
 		this.assetBaseDirectory = assetDir;
+		System.out.println("Setting MOD BASE DIRECTORY TO "+modDir);
+		System.out.println("Setting WORKING BASE DIRECTORY TO "+assetDir);
 		
 	}
 	public String getRenderBaseDirectory() {
