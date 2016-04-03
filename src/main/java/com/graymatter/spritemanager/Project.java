@@ -38,6 +38,13 @@ public class Project {
 		return out;
 	}
 	
+	public String getRelativeToMod(String text) throws ProjectSetupException {
+		String out = projectDirectory.toURI().relativize(new File(text).toURI()).getPath();
+		if (out.startsWith("/")||out.startsWith("\\")) throw new ProjectSetupException("The chosen Directory is outside the Mod Directory");
+		return out;
+	}
+
+	
 	private Project(Workspace workspace) throws ProjectSetupException {
 
 		setProjectDirectory(new File(workspace.getModBaseDirectory()));
@@ -138,6 +145,7 @@ public class Project {
 	public void setIncludeLib(File includeLib) {
 		this.includeLib = includeLib;
 	}
+
 
 
 

@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import com.graymatter.spritemanager.Project;
+import com.graymatter.spritemanager.entities.ManagedSprite;
 import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 
 public class CreateManagedEntity extends JDialog {
@@ -51,6 +52,8 @@ public class CreateManagedEntity extends JDialog {
 		initUI();
 	}
 	
+	ProjectEditorWindow editorWindow;
+	
 	private Project project; 
 	/**
 	 * Create the dialog.
@@ -59,7 +62,8 @@ public class CreateManagedEntity extends JDialog {
 		
 		UIUtils.setIcon(this);
 		
-		project = ((ProjectEditorWindow)this.getParent()).getProject();
+		editorWindow = (ProjectEditorWindow) getParent();
+		project = editorWindow.getProject();
 		
 		final JFileChooser modGraphicsFileChooser = new JFileChooser(project.getGraphicsDirectory().getAbsolutePath());
 		modGraphicsFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -138,6 +142,7 @@ public class CreateManagedEntity extends JDialog {
 			JButton btnModAssetPath = new JButton("Change");
 			btnModAssetPath.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					
 					modGraphicsFileChooser.setDialogTitle("Select Managed Sprite Output Graphics Folder");
 					int returnVal = modGraphicsFileChooser.showOpenDialog(CreateManagedEntity.this);
 			        if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -151,6 +156,7 @@ public class CreateManagedEntity extends JDialog {
 						}
 			            
 			        }
+			        
 				}
 			});
 			GridBagConstraints gbc_btnModAssetPath = new GridBagConstraints();
@@ -181,6 +187,26 @@ public class CreateManagedEntity extends JDialog {
 		}
 		{
 			JButton btnWorkingAssetPath = new JButton("Change");
+			btnWorkingAssetPath.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					
+					
+					workingFileDir.setDialogTitle("Select Managed Sprite Working Folder (Render Output)");
+					int returnVal = workingFileDir.showOpenDialog(CreateManagedEntity.this);
+			        if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            File selectedFolder = workingFileDir.getSelectedFile();
+			            
+						try {
+							String path = project.getRelativetoWorkingDirectory(selectedFolder.getPath());
+							textWorkingAssetPath.setText(path);
+						} catch (ProjectSetupException e1) {
+							UIUtils.showError(e1, CreateManagedEntity.this);
+						}
+			            
+			        }
+					
+				}
+			});
 			GridBagConstraints gbc_btnWorkingAssetPath = new GridBagConstraints();
 			gbc_btnWorkingAssetPath.gridx = 2;
 			gbc_btnWorkingAssetPath.gridy = 2;
@@ -192,6 +218,34 @@ public class CreateManagedEntity extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						
+						ManagedSprite ms = new ManagedSprite();
+						ms.setItemName(textItemNameField.getText());
+						try {
+							ms.setLuaLibPath(project.getRelativeToMod(project.getGraphicsDefinitionLib().getAbsolutePath()+"/"+ms.getItemName()+".lua"));
+						} catch (ProjectSetupException e2) {
+							UIUtils.showError(e2, CreateManagedEntity.this);
+							e2.printStackTrace();
+						}
+						ms.setManagedSpriteName(ms.getItemName());
+						ms.setModAssetPath(textModAssetPath.getText());
+						ms.setWorkingAssetPath(textWorkingAssetPath.getText());
+						
+						try {
+							project.getManagedEntities().addEntity(ms);
+							project.saveManagedSprites();
+							CreateManagedEntity.this.editorWindow.updateManagedSprites();
+							CreateManagedEntity.this.dispose();
+							
+						} catch (ProjectSetupException e1) {
+							UIUtils.showError(e1, CreateManagedEntity.this);
+							e1.printStackTrace();
+						}
+						
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);

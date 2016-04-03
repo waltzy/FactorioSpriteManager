@@ -3,7 +3,7 @@ package com.graymatter.spritemanager.entities;
 public class ManagedSprite {
 
 	private String managedSpriteName;
-	private SpriteType type;
+	private SpriteType type = SpriteType.VEHICLE;
 	private String modAssetPath;
 	private String workingAssetPath;
 	private String luaLibPath;
