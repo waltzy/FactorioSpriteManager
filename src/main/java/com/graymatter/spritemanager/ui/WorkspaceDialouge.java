@@ -21,8 +21,13 @@ public class WorkspaceDialouge extends JFrame {
 	private JComboBox<Workspace> comboBox;
 	
 	public WorkspaceDialouge() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
+		
+		UIUtils.setIcon(this);
+		
 		final WorkspaceDialouge that = this;
-		setTitle("Select Workspace (Mod Folder)");
+		setTitle("Select Workspace (Your Mod Folder)");
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{28, 61, 83, 0};
 		gridBagLayout.rowHeights = new int[] {23, 0, 0, 0};
@@ -88,10 +93,11 @@ public class WorkspaceDialouge extends JFrame {
 		gbc_horizontalStrut_2.gridy = 1;
 		getContentPane().add(horizontalStrut_2, gbc_horizontalStrut_2);
 		pack();
+		updateWorkspaces();
 	}
 
 	public void updateWorkspaces() {
-		comboBox.removeAll();
+		comboBox.removeAllItems();
 		try {
 			for (Workspace w : WorkspaceManager.getInstance().getWorkspaceList()){
 				comboBox.addItem(w);

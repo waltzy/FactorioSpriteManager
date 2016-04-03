@@ -57,6 +57,7 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 	 * Create the frame.
 	 */
 	public OpenNewWorkspaceDialouge() {
+		setResizable(false);
 		initUI();
 	}
 
@@ -64,6 +65,8 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 	private File assetsFile;
 	
 	public void initUI(){
+		
+		UIUtils.setIcon(this);
 		
 		final JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
