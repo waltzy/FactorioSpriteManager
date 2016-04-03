@@ -1,0 +1,10 @@
+{
+  "workspaces": [
+    {
+      "modBaseDirectory": "C:\\Users\\Waltzy\\Documents\\Visual Studio 2015"
+    },
+    {
+      "modBaseDirectory": "C:\\Users\\Waltzy\\Documents\\Anno 2205"
+    }
+  ]
+}

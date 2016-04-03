@@ -1,17 +1,27 @@
 package com.graymatter.spritemanager.ui;
 
+
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+
+import com.graymatter.spritemanager.WorkspaceManager;
+import com.graymatter.spritemanager.entities.Workspace;
+import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 
 public class OpenNewWorkspaceDialouge extends JDialog {
 
@@ -50,7 +60,13 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 		initUI();
 	}
 
+	private File modFolder;
+	private File assetsFile;
+	
 	public void initUI(){
+		
+		final JFileChooser fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		setTitle("Create New Workspace");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -75,6 +91,16 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 		modFolderField.setColumns(60);
 		
 		JButton btnSetModFolder = new JButton("Set Mod Folder");
+		btnSetModFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fc.setDialogTitle("Select mod Folder");
+				int returnVal = fc.showOpenDialog(OpenNewWorkspaceDialouge.this);
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            modFolder = fc.getSelectedFile();
+		            modFolderField.setText(modFolder.getAbsolutePath());
+		        }
+			}
+		});
 		btnSetModFolder.setHorizontalAlignment(SwingConstants.LEADING);
 		GridBagConstraints gbc_btnSetModFolder = new GridBagConstraints();
 		gbc_btnSetModFolder.fill = GridBagConstraints.HORIZONTAL;
@@ -94,6 +120,16 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 		AssetFolderField.setColumns(60);
 		
 		JButton btnSetAssetsFolder = new JButton("Set Assets Folder");
+		btnSetAssetsFolder.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fc.setDialogTitle("Select Assets Folder");
+				int returnVal = fc.showOpenDialog(OpenNewWorkspaceDialouge.this);
+		        if (returnVal == JFileChooser.APPROVE_OPTION) {
+		            assetsFile = fc.getSelectedFile();
+		            AssetFolderField.setText(assetsFile.getAbsolutePath());
+		        }
+			}
+		});
 		btnSetAssetsFolder.setHorizontalAlignment(SwingConstants.LEADING);
 		GridBagConstraints gbc_btnSetAssetsFolder = new GridBagConstraints();
 		gbc_btnSetAssetsFolder.fill = GridBagConstraints.HORIZONTAL;
@@ -103,6 +139,18 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 		contentPane.add(btnSetAssetsFolder, gbc_btnSetAssetsFolder);
 		
 		btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				WorkspaceDialouge parent = (WorkspaceDialouge) getParent();
+				try {
+					WorkspaceManager.getInstance().addWorkspace(new Workspace(modFolder.getAbsolutePath(), assetsFile.getAbsolutePath()));
+				} catch (ProjectSetupException e1) {
+					UIUtils.showError(e1, OpenNewWorkspaceDialouge.this);
+				}
+				parent.updateWorkspaces();
+				OpenNewWorkspaceDialouge.this.dispose();
+			}
+		});
 		GridBagConstraints gbc_btnSave = new GridBagConstraints();
 		gbc_btnSave.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSave.gridx = 1;

@@ -1,14 +1,9 @@
 package com.graymatter.spritemanager;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.graymatter.spritemanager.entities.ProjectInfo;
 import com.graymatter.spritemanager.entities.SpriteManagerManagedEntities;
@@ -28,10 +23,7 @@ public class Project {
 	private SpriteManagerManagedEntities managedEntities;
 
 	public static void main(String[] args) throws ProjectSetupException{
-		Workspace ws = new Workspace();
-		ws.setModBaseDirectory("C:\\Users\\Waltzy\\AppData\\Roaming\\Factorio\\mods\\BomberTutorial_0.1.1");
-		ws.setRenderBaseDirectory("C:\\Users\\Waltzy\\testWorkspace");
-		new Project(ws);
+		new Project(new Workspace("C:\\Users\\Waltzy\\AppData\\Roaming\\Factorio\\mods\\BomberTutorial_0.1.1", "C:\\Users\\Waltzy\\testWorkspace"));
 	}
 	
 	private Project(Workspace workspace) throws ProjectSetupException {

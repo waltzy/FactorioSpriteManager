@@ -1,16 +1,20 @@
 package com.graymatter.spritemanager.entities;
 
-import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class Workspaces {
 
-	private List<Workspace> workspaces;
+	public Workspace[] workspaces = new Workspace[0];
 
-	public List<Workspace> getWorkspaces() {
+	public Workspace[] getWorkspaces() {
 		return workspaces;
 	}
 
-	public void setWorkspaces(List<Workspace> workspaces) {
+	public void addWorkSpace(Workspace ws){
+		workspaces = (Workspace[]) ArrayUtils.add(workspaces, ws);
+	}
+	
+	public void setWorkspaces(Workspace[] workspaces) {
 		this.workspaces = workspaces;
 	}
 	

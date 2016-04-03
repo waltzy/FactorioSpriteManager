@@ -1,18 +1,25 @@
 package com.graymatter.spritemanager.ui;
 
-import javax.swing.JFrame;
-import java.awt.FlowLayout;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+
+import com.graymatter.spritemanager.WorkspaceManager;
+import com.graymatter.spritemanager.entities.Workspace;
+import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 
 public class WorkspaceDialouge extends JFrame {
+	
+	private JComboBox<Workspace> comboBox;
+	
 	public WorkspaceDialouge() {
 		final WorkspaceDialouge that = this;
 		setTitle("Select Workspace (Mod Folder)");
@@ -32,7 +39,7 @@ public class WorkspaceDialouge extends JFrame {
 			}
 		});
 		
-		JComboBox<String> comboBox = new JComboBox<String>();
+		comboBox = new JComboBox<Workspace>();
 		comboBox.setMaximumRowCount(100000);
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
@@ -81,6 +88,18 @@ public class WorkspaceDialouge extends JFrame {
 		gbc_horizontalStrut_2.gridy = 1;
 		getContentPane().add(horizontalStrut_2, gbc_horizontalStrut_2);
 		pack();
+	}
+
+	public void updateWorkspaces() {
+		comboBox.removeAll();
+		try {
+			for (Workspace w : WorkspaceManager.getInstance().getWorkspaceList()){
+				comboBox.addItem(w);
+			}
+		} catch (ProjectSetupException e) {
+			UIUtils.showError(e, this);
+		}
+
 	}
 
 }

@@ -14,25 +14,34 @@ public class WorkspaceManager {
 	private Workspaces workspaces;
 	private File workspaceFile; 
 	private WorkspaceManager() throws ProjectSetupException{
-		workspaceFile = new File("./workspaces");
+		workspaceFile = new File("./workspaces.json");
 		SMFileUtils.ensureJson(workspaceFile, new Workspaces());
+		reload();
+	}
+	
+	public void reload() throws ProjectSetupException{
 		setWorkspaces((Workspaces) SMFileUtils.getJson(workspaceFile.getAbsolutePath(), Workspaces.class));
 	}
 	
 	public void addWorkspace(Workspace workspace){
-		workspaces.getWorkspaces().add(workspace);
+		workspaces.addWorkSpace(workspace);
 		save();
 	}
 	
 	private void save() {
 		try {
-			SMFileUtils.ensureJson(workspaceFile, workspaces);
+			System.out.println("Listing Workspaces to save...");
+			for (Workspace ws : workspaces.getWorkspaces()) {
+				System.out.println(ws.getModBaseDirectory());
+			}
+			SMFileUtils.writeJson(workspaceFile, workspaces);
+			
 		} catch (ProjectSetupException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public List<Workspace> getWorkspaceList(){
+	public Workspace[] getWorkspaceList(){
 		return workspaces.getWorkspaces();
 	}
 	

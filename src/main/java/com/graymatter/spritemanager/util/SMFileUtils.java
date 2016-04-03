@@ -32,22 +32,27 @@ public class SMFileUtils {
 		return directory;
 	}
 	
-	public static File ensureJson(File file, Object object) throws ProjectSetupException{
+	public static <T> File ensureJson(File file, T object) throws ProjectSetupException{
 		if (!file.exists()) {
-			file = createOrLoadFile(file.getAbsolutePath());
-			PrintWriter out;
-			try {
-				out = new PrintWriter(file);
-			} catch (FileNotFoundException e) {
-				throw new ProjectSetupException("could not create info.json "+ e.getMessage());
-			}
-			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			out.print(gson.toJson(object));
-			out.flush();
-			out.close();
+			writeJson(file, object);
 		}
 		return file;
 	}
+	
+	public static <T> File writeJson(File file, T object) throws ProjectSetupException{
+		file = createOrLoadFile(file.getAbsolutePath());
+		PrintWriter out;
+		try {
+			out = new PrintWriter(file);
+		} catch (FileNotFoundException e) {
+			throw new ProjectSetupException("could not create info.json "+ e.getMessage());
+		}
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		out.print(gson.toJson(object));
+		out.flush();
+		out.close();
+		return file;
+	}	
 	
 	public static File createOrLoadFile(String string) throws ProjectSetupException {
 		File file = new File(string);

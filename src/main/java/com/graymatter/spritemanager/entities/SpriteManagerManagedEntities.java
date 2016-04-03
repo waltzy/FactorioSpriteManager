@@ -1,17 +1,14 @@
 package com.graymatter.spritemanager.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SpriteManagerManagedEntities {
 
-	private List<String> sprites = new ArrayList<String>();
+	private String[] sprites = new String[0];
 
-	public List<String> getSprites() {
+	public String[] getSprites() {
 		return sprites;
 	}
 
-	public void setSprites(List<String> sprites) {
+	public void setSprites(String[] sprites) {
 		this.sprites = sprites;
 	}
 	
