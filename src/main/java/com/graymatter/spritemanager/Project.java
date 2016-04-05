@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.graymatter.spritemanager.entities.ManagedSprite;
 import com.graymatter.spritemanager.entities.ProjectInfo;
 import com.graymatter.spritemanager.entities.SpriteManagerManagedEntities;
 import com.graymatter.spritemanager.entities.Workspace;
@@ -44,6 +45,11 @@ public class Project {
 		return out;
 	}
 
+	public void ensureManagedSpriteFoldersWorkingExist() throws ProjectSetupException{
+		for (ManagedSprite ms : managedEntities.getSprites()){
+			SMFileUtils.createOrLoadDirectory(getWorkingDirectory().getAbsolutePath()+"\\"+ms.getWorkingAssetPath());
+		}
+	}
 	
 	private Project(Workspace workspace) throws ProjectSetupException {
 
@@ -83,6 +89,7 @@ public class Project {
 
 	public void saveManagedSprites() throws ProjectSetupException{
 		SMFileUtils.writeJson(managedEntityFile, managedEntities);
+		ensureManagedSpriteFoldersWorkingExist();
 	}
 
 	public static Project getProject(Workspace workspace) throws ProjectSetupException {

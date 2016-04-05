@@ -100,7 +100,7 @@ public class CreateManagedEntity extends JDialog {
 				public void keyReleased(KeyEvent arg0) {
 					ProjectEditorWindow pew = (ProjectEditorWindow) CreateManagedEntity.this.getParent();
 					try {
-						textModAssetPath.setText(pew.getProject().getRelativetoGraphicsPath(project.getGraphicsDirectory().getAbsolutePath()+"\\"+textItemNameField.getText()));
+						textModAssetPath.setText(pew.getProject().getRelativeToMod(project.getGraphicsDirectory().getAbsolutePath()+"\\"+textItemNameField.getText()));
 						textWorkingAssetPath.setText(pew.getProject().getRelativetoWorkingDirectory(project.getWorkingDirectory().getAbsolutePath()+"\\"+textItemNameField.getText()));
 					} catch (ProjectSetupException e) {
 						/* C'est Impossible! */
@@ -149,7 +149,7 @@ public class CreateManagedEntity extends JDialog {
 			            File selectedFolder = modGraphicsFileChooser.getSelectedFile();
 			            
 						try {
-							String path = project.getRelativetoGraphicsPath(selectedFolder.getPath());
+							String path = project.getRelativeToMod(selectedFolder.getPath());
 							textModAssetPath.setText(path);
 						} catch (ProjectSetupException e1) {
 							UIUtils.showError(e1, CreateManagedEntity.this);
@@ -224,7 +224,7 @@ public class CreateManagedEntity extends JDialog {
 						ManagedSprite ms = new ManagedSprite();
 						ms.setItemName(textItemNameField.getText());
 						try {
-							ms.setLuaLibPath(project.getRelativeToMod(project.getGraphicsDefinitionLib().getAbsolutePath()+"/"+ms.getItemName()+".lua"));
+							ms.setLuaLibPath(project.getRelativeToMod(project.getGraphicsDefinitionLib().getAbsolutePath()+"\\"+ms.getItemName()+".lua"));
 						} catch (ProjectSetupException e2) {
 							UIUtils.showError(e2, CreateManagedEntity.this);
 							e2.printStackTrace();

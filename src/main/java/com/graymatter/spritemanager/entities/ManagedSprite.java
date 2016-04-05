@@ -1,5 +1,10 @@
 package com.graymatter.spritemanager.entities;
 
+import java.io.File;
+
+import com.graymatter.spritemanager.Project;
+import com.graymatter.spritemanager.exceptions.ProjectSetupException;
+
 public class ManagedSprite {
 
 	private String managedSpriteName;
@@ -12,6 +17,24 @@ public class ManagedSprite {
 		return managedSpriteName;
 	}
 	
+	public String getFullyQualifiedModGraphicsAssetPath(Project p){
+		return (p.getProjectDirectory().getAbsolutePath()+"\\"+modAssetPath).replace("/", "\\");
+	}
+	
+	public File getFullyQualifiedModGraphicsAssetFile(Project p) throws ProjectSetupException{
+		File file = new File(getFullyQualifiedModGraphicsAssetPath(p));
+		if (!file.exists()) throw new ProjectSetupException("File does not exist");
+		return file;
+	}
+	public String getFullyQualifiedWorkingPath(Project p){
+		return (p.getWorkingDirectory().getAbsolutePath()+"\\"+workingAssetPath).replace("/", "\\");
+	}
+	
+	public File getFullyQualifiedWorkingFile(Project p) throws ProjectSetupException{
+		File file = new File(getFullyQualifiedWorkingPath(p));
+		if (!file.exists()) throw new ProjectSetupException("File does not exist");
+		return file;
+	}
 	@Override
 	public String toString(){
 		return managedSpriteName;

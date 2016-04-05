@@ -27,12 +27,14 @@ public class WorkspaceDialouge extends JFrame {
 		
 		UIUtils.setIcon(this);
 		
+		setBounds(200, 200, 610 , 97);
+		
 		final WorkspaceDialouge that = this;
 		setTitle("Select Workspace (Your Mod Folder)");
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{28, 61, 83, 0};
+		gridBagLayout.columnWidths = new int[]{0, 28, 61, 83, 0};
 		gridBagLayout.rowHeights = new int[] {23, 0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 		
@@ -45,13 +47,20 @@ public class WorkspaceDialouge extends JFrame {
 			}
 		});
 		
+		Component verticalStrut = Box.createVerticalStrut(20);
+		GridBagConstraints gbc_verticalStrut = new GridBagConstraints();
+		gbc_verticalStrut.insets = new Insets(0, 0, 5, 5);
+		gbc_verticalStrut.gridx = 0;
+		gbc_verticalStrut.gridy = 0;
+		getContentPane().add(verticalStrut, gbc_verticalStrut);
+		
 		comboBox = new JComboBox<Workspace>();
 		comboBox.setMaximumRowCount(100000);
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.anchor = GridBagConstraints.WEST;
+		gbc_comboBox.anchor = GridBagConstraints.EAST;
 		gbc_comboBox.insets = new Insets(5, 5, 5, 5);
-		gbc_comboBox.gridx = 0;
+		gbc_comboBox.gridx = 1;
 		gbc_comboBox.gridy = 0;
 		getContentPane().add(comboBox, gbc_comboBox);
 		
@@ -75,32 +84,34 @@ public class WorkspaceDialouge extends JFrame {
 		gbc_btnSelect.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnSelect.anchor = GridBagConstraints.NORTHWEST;
 		gbc_btnSelect.insets = new Insets(5, 0, 5, 5);
-		gbc_btnSelect.gridx = 1;
+		gbc_btnSelect.gridx = 2;
 		gbc_btnSelect.gridy = 0;
 		getContentPane().add(btnSelect, gbc_btnSelect);
 		GridBagConstraints gbc_btnNew = new GridBagConstraints();
-		gbc_btnNew.fill = GridBagConstraints.HORIZONTAL;
-		gbc_btnNew.insets = new Insets(5, 0, 5, 5);
-		gbc_btnNew.anchor = GridBagConstraints.NORTHWEST;
-		gbc_btnNew.gridx = 2;
+		gbc_btnNew.insets = new Insets(5, 0, 5, 0);
+		gbc_btnNew.anchor = GridBagConstraints.WEST;
+		gbc_btnNew.gridx = 3;
 		gbc_btnNew.gridy = 0;
 		getContentPane().add(btnNew, gbc_btnNew);
 		
-		Component horizontalStrut = Box.createHorizontalStrut(360);
+		Component horizontalStrut = Box.createHorizontalStrut(400);
 		GridBagConstraints gbc_horizontalStrut = new GridBagConstraints();
-		gbc_horizontalStrut.gridx = 0;
+		gbc_horizontalStrut.insets = new Insets(0, 0, 5, 5);
+		gbc_horizontalStrut.gridx = 1;
 		gbc_horizontalStrut.gridy = 1;
 		getContentPane().add(horizontalStrut, gbc_horizontalStrut);
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(70);
 		GridBagConstraints gbc_horizontalStrut_1 = new GridBagConstraints();
-		gbc_horizontalStrut_1.gridx = 1;
+		gbc_horizontalStrut_1.insets = new Insets(0, 0, 5, 5);
+		gbc_horizontalStrut_1.gridx = 2;
 		gbc_horizontalStrut_1.gridy = 1;
 		getContentPane().add(horizontalStrut_1, gbc_horizontalStrut_1);
 		
-		Component horizontalStrut_2 = Box.createHorizontalStrut(70);
+		Component horizontalStrut_2 = Box.createHorizontalStrut(100);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
-		gbc_horizontalStrut_2.gridx = 2;
+		gbc_horizontalStrut_2.insets = new Insets(0, 0, 5, 0);
+		gbc_horizontalStrut_2.gridx = 3;
 		gbc_horizontalStrut_2.gridy = 1;
 		getContentPane().add(horizontalStrut_2, gbc_horizontalStrut_2);
 		pack();

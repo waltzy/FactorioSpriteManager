@@ -17,6 +17,11 @@ public class Sprite {
 
 	}
 	
+	@Override 
+	public String toString(){
+		return file.getName();
+	} 
+	
 	public Sprite(File file) throws SpriteBuilderException {
 		this.file = file;
 		try {

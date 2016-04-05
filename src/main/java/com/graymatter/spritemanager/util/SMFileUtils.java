@@ -18,7 +18,7 @@ public class SMFileUtils {
 		File directory = new File(string);
 		if (!directory.exists()) {
 			try {
-				if (!directory.mkdir())
+				if (!directory.mkdirs())
 					throw new ProjectSetupException("Could not create directory, "
 							+ "does this application have permissions to create the folder " + string + " ?");
 			} catch (RuntimeException e) {
@@ -45,7 +45,7 @@ public class SMFileUtils {
 		try {
 			out = new PrintWriter(file);
 		} catch (FileNotFoundException e) {
-			throw new ProjectSetupException("could not create info.json "+ e.getMessage());
+			throw new ProjectSetupException("could not create info.json "+ e.getMessage(), e);
 		}
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		out.print(gson.toJson(object));

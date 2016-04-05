@@ -1,8 +1,8 @@
 {
   "workspaces": [
     {
-      "modBaseDirectory": "C:\\Users\\Waltzy\\FTest\\Mod",
-      "assetBaseDirectory": "C:\\Users\\Waltzy\\FTest\\Working"
+      "modBaseDirectory": "C:\\Users\\Waltzy\\AppData\\Roaming\\Factorio\\mods\\BomberTutorial_0.1.1",
+      "assetBaseDirectory": "C:\\Users\\Waltzy\\AppData\\Roaming\\Factorio\\mods\\BomberTutorial_0.1.1\\Simons scrapyar"
     }
   ]
 }
