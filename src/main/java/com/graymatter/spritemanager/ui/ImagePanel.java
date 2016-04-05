@@ -1,7 +1,7 @@
 package com.graymatter.spritemanager.ui;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.GridBagLayout;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -18,14 +18,20 @@ public class ImagePanel extends JPanel{
 	public void setImage(BufferedImage image) {
 		this.image = image;
 		this.repaint();
+		this.getParent().doLayout();
 	}
 
+	@Override
+	public Dimension getPreferredSize(){
+		if (image==null) return super.getPreferredSize();
+		return new Dimension(image.getWidth(), image.getHeight());
+	}
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		if (image!=null) {
-
-			setBounds(getBounds().x, getBounds().y, image.getWidth(), image.getWidth());
+			
 			g.drawImage(image, 0, 0, null);
 		}
 	}

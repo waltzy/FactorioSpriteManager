@@ -1,7 +1,6 @@
 package com.graymatter.spritemanager.workers;
 
 
-import java.awt.Window;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -11,8 +10,6 @@ import java.util.regex.Pattern;
 
 import javax.swing.SwingWorker;
 
-import com.graymatter.spritemanager.CombinedSprite;
-import com.graymatter.spritemanager.CombinedSpriteFactory;
 import com.graymatter.spritemanager.Sprite;
 import com.graymatter.spritemanager.Vector2i;
 import com.graymatter.spritemanager.exceptions.SpriteBuilderException;
@@ -60,10 +57,6 @@ public class SpriteBuilder extends SwingWorker<List<Sprite>, Double>{
 		System.out.println("Done");
 	}
 	
-	public List<CombinedSprite> createCombinedSprites() throws SpriteBuilderException{
-		CombinedSpriteFactory.generateCombinedSprites(sprites);
-		return null;
-	} 
 	
 	private void getSprites() throws SpriteBuilderException {
 		System.out.println("getting sprites..");

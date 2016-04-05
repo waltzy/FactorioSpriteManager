@@ -1,7 +1,6 @@
 package com.graymatter.spritemanager;
 
 import java.io.File;
-import java.util.List;
 
 import com.graymatter.spritemanager.entities.Workspace;
 import com.graymatter.spritemanager.entities.Workspaces;

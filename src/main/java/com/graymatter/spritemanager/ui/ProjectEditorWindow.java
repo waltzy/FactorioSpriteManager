@@ -17,7 +17,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.FileLockInterruptionException;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -43,7 +42,6 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.graymatter.spritemanager.ConsoleOutputStream;
 import com.graymatter.spritemanager.Project;
 import com.graymatter.spritemanager.Sprite;
 import com.graymatter.spritemanager.entities.ManagedSprite;
@@ -75,7 +73,7 @@ public class ProjectEditorWindow extends JFrame {
 
 	private Project project;
 	private JList<ManagedSprite> managedSpritesList;
-	private JPanel stripesViewerPanel;
+	private JList stripesList;
 	private ImagePanel spriteViewerPanel;
 	private JList<Sprite> tilesList;
 	private JPanel managedSpriteDetails;
@@ -137,6 +135,8 @@ public class ProjectEditorWindow extends JFrame {
 			managedspriteName.setText(selectedSprite.getManagedSpriteName());
 			filePatternText.setText(selectedSprite.getFilePattern());
 			spriteTypeComboBox.setSelectedItem(selectedSprite.getType());
+			spriteViewerPanel.setImage(null);
+			clearTilesList();
 			
 		} else {
 			
@@ -155,7 +155,9 @@ public class ProjectEditorWindow extends JFrame {
 		managedspriteName.setText("");
 		filePatternText.setText("");
 		spriteTypeComboBox.setSelectedItem(null);
+		spriteViewerPanel.setImage(null);
 		clearTilesList();
+		
 	}
 	
 	/**
@@ -173,9 +175,9 @@ public class ProjectEditorWindow extends JFrame {
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, 0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 1.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowHeights = new int[]{0, 59, 0, 0};
+		gbl_contentPane.columnWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
+		gbl_contentPane.rowWeights = new double[]{0.0, 0.0, 1.0, Double.MIN_VALUE};
 		contentPane.setLayout(gbl_contentPane);
 		
 		spriteListPanel = new JPanel();
@@ -684,6 +686,15 @@ public class ProjectEditorWindow extends JFrame {
 		panel_9.add(horizontalStrut);
 		
 		JButton btnGenerateStripes = new JButton("Generate Stripes");
+		btnGenerateStripes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if (tiles==null) UIUtils.showError(new Exception("No tiles loaded"), ProjectEditorWindow.this);
+				
+				
+				
+			}
+		});
 		panel_9.add(btnGenerateStripes);
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
@@ -774,12 +785,15 @@ public class ProjectEditorWindow extends JFrame {
 		JLabel lblStripes = new JLabel("Stripes");
 		panel_3.add(lblStripes);
 		
-		stripesViewerPanel = new JPanel();
-		GridBagConstraints gbc_stripesViewerPanel = new GridBagConstraints();
-		gbc_stripesViewerPanel.fill = GridBagConstraints.BOTH;
-		gbc_stripesViewerPanel.gridx = 0;
-		gbc_stripesViewerPanel.gridy = 1;
-		stripesPanel.add(stripesViewerPanel, gbc_stripesViewerPanel);
+		JScrollPane scrollPane_3 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_3 = new GridBagConstraints();
+		gbc_scrollPane_3.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_3.gridx = 0;
+		gbc_scrollPane_3.gridy = 1;
+		stripesPanel.add(scrollPane_3, gbc_scrollPane_3);
+		
+		stripesList = new JList();
+		scrollPane_3.setViewportView(stripesList);
 		
 		consolePanel = new JPanel();
 		consolePanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -846,16 +860,20 @@ public class ProjectEditorWindow extends JFrame {
 		
 		Component horizontalStrut_2 = Box.createHorizontalStrut(200);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
+		gbc_horizontalStrut_2.insets = new Insets(0, 0, 5, 0);
 		gbc_horizontalStrut_2.gridx = 0;
 		gbc_horizontalStrut_2.gridy = 1;
 		tileViewPanel.add(horizontalStrut_2, gbc_horizontalStrut_2);
 		
+		JScrollPane scrollPane_4 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_4 = new GridBagConstraints();
+		gbc_scrollPane_4.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_4.gridx = 0;
+		gbc_scrollPane_4.gridy = 2;
+		tileViewPanel.add(scrollPane_4, gbc_scrollPane_4);
+		
 		spriteViewerPanel = new ImagePanel();
-		GridBagConstraints gbc_spriteViewerPanel = new GridBagConstraints();
-		gbc_spriteViewerPanel.fill = GridBagConstraints.BOTH;
-		gbc_spriteViewerPanel.gridx = 0;
-		gbc_spriteViewerPanel.gridy = 2;
-		tileViewPanel.add(spriteViewerPanel, gbc_spriteViewerPanel);
+		scrollPane_4.setViewportView(spriteViewerPanel);
 		
 		
 

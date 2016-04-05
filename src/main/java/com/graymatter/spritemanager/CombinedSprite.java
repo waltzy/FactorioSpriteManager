@@ -71,7 +71,6 @@ public class CombinedSprite extends Sprite {
 	   
 	   public static BufferedImage joinBufferedImageVerticial(BufferedImage img1,BufferedImage img2) {
 
-	        int offset  = 0;
 	        int height = img1.getHeight()+img2.getHeight();
 	        int width = Math.max(img1.getWidth(),img2.getWidth());
 	        
