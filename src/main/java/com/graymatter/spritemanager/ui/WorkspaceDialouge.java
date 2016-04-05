@@ -19,6 +19,10 @@ import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 
 public class WorkspaceDialouge extends JFrame {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5972597430624170912L;
 	private JComboBox<Workspace> comboBox;
 	
 	public WorkspaceDialouge() {

@@ -26,6 +26,10 @@ import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 
 public class CreateManagedEntity extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -243182771523372160L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textItemNameField;
 	private JTextField textModAssetPath;

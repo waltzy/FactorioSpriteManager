@@ -34,7 +34,7 @@ public class SpriteListCellRenderer extends DefaultListCellRenderer {
 
     @Override
     public Component getListCellRendererComponent(
-            JList list,
+            @SuppressWarnings("rawtypes") JList list,
             Object value,
             int index,
             boolean selected,

@@ -42,6 +42,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.graymatter.spritemanager.CombinedSprite;
 import com.graymatter.spritemanager.Project;
 import com.graymatter.spritemanager.Sprite;
 import com.graymatter.spritemanager.entities.ManagedSprite;
@@ -52,6 +53,10 @@ import com.graymatter.spritemanager.workers.SpriteBuilder;
 
 public class ProjectEditorWindow extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3942285832231752941L;
 	private JPanel contentPane;
 
 
@@ -73,7 +78,7 @@ public class ProjectEditorWindow extends JFrame {
 
 	private Project project;
 	private JList<ManagedSprite> managedSpritesList;
-	private JList stripesList;
+	private JList<CombinedSprite> stripesList;
 	private ImagePanel spriteViewerPanel;
 	private JList<Sprite> tilesList;
 	private JPanel managedSpriteDetails;
@@ -344,7 +349,7 @@ public class ProjectEditorWindow extends JFrame {
 				}
 			}
 		});
-		spriteTypeComboBox.setModel(new DefaultComboBoxModel(SpriteType.values()));
+		spriteTypeComboBox.setModel(new DefaultComboBoxModel<SpriteType>(SpriteType.values()));
 		GridBagConstraints gbc_spriteTypeComboBox = new GridBagConstraints();
 		gbc_spriteTypeComboBox.gridwidth = 2;
 		gbc_spriteTypeComboBox.insets = new Insets(5, 5, 5, 0);
@@ -792,7 +797,7 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_scrollPane_3.gridy = 1;
 		stripesPanel.add(scrollPane_3, gbc_scrollPane_3);
 		
-		stripesList = new JList();
+		stripesList = new JList<CombinedSprite>();
 		scrollPane_3.setViewportView(stripesList);
 		
 		consolePanel = new JPanel();

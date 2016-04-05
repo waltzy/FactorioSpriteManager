@@ -26,6 +26,10 @@ public class OpenNewWorkspaceDialouge extends JDialog {
 
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8781214845964127176L;
 	private JPanel contentPane;
 	private JTextField modFolderField;
 	private JTextField AssetFolderField;
