@@ -43,6 +43,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.graymatter.spritemanager.CombinedSprite;
+import com.graymatter.spritemanager.ConsoleOutputStream;
 import com.graymatter.spritemanager.Project;
 import com.graymatter.spritemanager.Sprite;
 import com.graymatter.spritemanager.entities.ManagedSprite;
@@ -126,7 +127,7 @@ public class ProjectEditorWindow extends JFrame {
 		this.project = project;
 		managedSpriteSelected(false);
 		updateManagedSprites();
-		// new ConsoleOutputStream(consoleTextArea);
+		new ConsoleOutputStream(consoleTextArea);
 		modDirtextField.setText(project.getProjectDirectory().getAbsolutePath());
 		workingDirTextField.setText(project.getWorkingDirectory().getAbsolutePath());
 

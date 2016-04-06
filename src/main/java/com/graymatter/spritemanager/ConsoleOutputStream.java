@@ -6,6 +6,8 @@ import java.io.PrintStream;
 
 import javax.swing.JTextArea;
 
+import com.graymatter.spritemanager.util.TeePrintStream;
+
 public class ConsoleOutputStream extends OutputStream {
 
 	 private JTextArea textArea;
@@ -13,8 +15,13 @@ public class ConsoleOutputStream extends OutputStream {
 	    public ConsoleOutputStream(JTextArea textArea) {
 	        this.textArea = textArea;
 	        PrintStream printStream = new PrintStream(this);
-	        System.setOut(printStream);
-	        System.setErr(printStream);
+	        try {
+				System.setErr(new TeePrintStream(printStream, System.err));
+				System.setOut(new TeePrintStream(printStream, System.out));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	    }
 	     
 	    @Override

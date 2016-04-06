@@ -13,6 +13,7 @@ public class ManagedSprite {
 	private String workingAssetPath;
 	private String luaLibPath;
 	private String itemName;
+	private String filePattern = "%04d.png";
 	public String getManagedSpriteName() {
 		return managedSpriteName;
 	}
@@ -79,7 +80,6 @@ public class ManagedSprite {
 	public void setFilePattern(String filePattern) {
 		this.filePattern = filePattern;
 	}
-	private String filePattern;
 	
 	 
 }
