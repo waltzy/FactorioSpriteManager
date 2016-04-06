@@ -10,7 +10,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 import com.graymatter.spritemanager.exceptions.SpriteBuilderException;
+import com.graymatter.spritemanager.util.SMFileUtils;
 
 public class CombinedSprite extends Sprite {
 
@@ -41,8 +43,15 @@ public class CombinedSprite extends Sprite {
 		}
 	}
 
-	public void SaveBufferedImage(String fileName) throws IOException{
-		File outputfile = new File(sprites.get(0).getFile().getParentFile().getAbsolutePath()+"/"+fileName);
+	public void SaveBufferedImage(String fileName) throws IOException, SpriteBuilderException{
+		File dir;
+		try {
+			dir = SMFileUtils.createOrLoadDirectory(sprites.get(0).getFile().getParentFile().getAbsolutePath()+"/Stripes");
+		} catch (ProjectSetupException e) {
+			throw new SpriteBuilderException("Couldnt persist stripes", e);
+		}
+		File outputfile = new File(dir+"/"+fileName);
+		this.setFile(outputfile);
 	    ImageIO.write(getImage(), "png", outputfile);
 	}
 

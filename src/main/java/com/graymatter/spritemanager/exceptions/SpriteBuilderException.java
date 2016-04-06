@@ -11,4 +11,8 @@ public class SpriteBuilderException extends Exception {
 		super(string);
 	}
 
+	public SpriteBuilderException(String string, ProjectSetupException e) {
+		super(string, e);
+	}
+
 }
