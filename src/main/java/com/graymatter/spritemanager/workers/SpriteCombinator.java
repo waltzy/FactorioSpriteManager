@@ -62,10 +62,9 @@ public class SpriteCombinator extends SwingWorker<List<CombinedSprite>, Integer>
 		int totalCounter = 0;
 		double procressPercent = 50/totalSprites;
 		while (totalCounter < totalSprites) {
-			
 			if (currentCombinedSprite == null || counter == stripeFrameLength) {
 				counter = 0;
-				currentCombinedSprite = new CombinedSprite();
+				currentCombinedSprite = new CombinedSprite(sprites.get(totalCounter).getParent());
 				combinedSprites.add(currentCombinedSprite);
 			}
 			currentCombinedSprite.addSprite(sprites.get(totalCounter));
@@ -81,7 +80,7 @@ public class SpriteCombinator extends SwingWorker<List<CombinedSprite>, Integer>
 			
 			combinedSprite.update();
 			try {
-				combinedSprite.SaveBufferedImage("combined-" + i + ".png");
+				combinedSprite.SaveBufferedImage(sprites.get(0).getParent().getItemName()+"-" + i + ".png");
 			} catch (IOException e) {
 				throw new SpriteBuilderException("could not save image");
 			}
@@ -101,6 +100,7 @@ public class SpriteCombinator extends SwingWorker<List<CombinedSprite>, Integer>
             List<CombinedSprite> outSprites = get();
             System.out.println("finished Generating Stripes, generated "+outSprites.size()+" stripes");
             getInvokingWindow().setStripes(outSprites);
+            getInvokingWindow().processStripeIcons();
         } catch (Exception e) {
         	UIUtils.showError(e, getInvokingWindow());
         }

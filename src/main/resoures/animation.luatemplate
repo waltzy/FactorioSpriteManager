@@ -1,0 +1,20 @@
+function ${functionname}()
+return
+{
+  priority = "high",
+  layers =
+  {
+    {
+      width = ${width},
+      height = ${height},
+      frame_count = ${framecount},
+      direction_count = ${directioncount},
+      shift = {${shiftx}, ${shifty}},
+      stripes =
+      {
+${stripeslist}
+      }
+    }
+  }
+}
+end

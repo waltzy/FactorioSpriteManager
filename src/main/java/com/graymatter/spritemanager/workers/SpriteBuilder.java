@@ -12,6 +12,7 @@ import javax.swing.SwingWorker;
 
 import com.graymatter.spritemanager.Sprite;
 import com.graymatter.spritemanager.Vector2i;
+import com.graymatter.spritemanager.entities.ManagedSprite;
 import com.graymatter.spritemanager.exceptions.SpriteBuilderException;
 import com.graymatter.spritemanager.ui.ProjectEditorWindow;
 import com.graymatter.spritemanager.ui.UIUtils;
@@ -25,7 +26,7 @@ public class SpriteBuilder extends SwingWorker<List<Sprite>, Double>{
 	private String formatRegex;
 	private String directoryPath;
 	private String formatPattern;
-	
+	private ManagedSprite parent;
 	private ProjectEditorWindow invokeingWindow;
 	
 	@Override
@@ -39,7 +40,8 @@ public class SpriteBuilder extends SwingWorker<List<Sprite>, Double>{
 	}
 	
 	
-	public SpriteBuilder(String rootSpritePath, String formatPattern, ProjectEditorWindow window) throws SpriteBuilderException{
+	public SpriteBuilder(ManagedSprite parent, String rootSpritePath, String formatPattern, ProjectEditorWindow window) throws SpriteBuilderException{
+		this.parent = parent;
 		System.out.println("Starting Sprite Builder");
 		setRootSpritePath(rootSpritePath);
 		setFormatPattern(formatPattern);
@@ -90,7 +92,7 @@ public class SpriteBuilder extends SwingWorker<List<Sprite>, Double>{
 			
 			File foundFile = new File(scanFor);
 			if (!foundFile.exists()) continue;
-			sprites.add(new Sprite(foundFile));
+			sprites.add(new Sprite(foundFile, parent));
 			spritesPaths.add(foundFile.getAbsolutePath());
 		}
 		if (sprites.size()==0) throw new SpriteBuilderException("No Sprites found that match pattern");
@@ -124,8 +126,12 @@ public class SpriteBuilder extends SwingWorker<List<Sprite>, Double>{
     protected void done() { // called in the EDT. You can update the GUI here, show error dialogs, etc.
         try { 
             List<Sprite> outSprites = get();
-            System.out.println("in done sprites are of size "+outSprites.size());
+            System.out.println("Processed Sprites: "+outSprites.size());
             getInvokeingWindow().setTiles(outSprites);
+            
+            getInvokeingWindow().processSprites();
+            
+            
         } catch (Exception e) {
         	UIUtils.showError(e, getInvokeingWindow());
         }

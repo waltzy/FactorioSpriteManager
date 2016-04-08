@@ -11,13 +11,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -25,6 +31,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -42,6 +49,10 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
+
+import com.graymatter.spritemanager.App;
 import com.graymatter.spritemanager.CombinedSprite;
 import com.graymatter.spritemanager.ConsoleOutputStream;
 import com.graymatter.spritemanager.Project;
@@ -50,6 +61,7 @@ import com.graymatter.spritemanager.entities.ManagedSprite;
 import com.graymatter.spritemanager.entities.SpriteType;
 import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 import com.graymatter.spritemanager.exceptions.SpriteBuilderException;
+import com.graymatter.spritemanager.workers.IconWorker;
 import com.graymatter.spritemanager.workers.SpriteBuilder;
 import com.graymatter.spritemanager.workers.SpriteCombinator;
 
@@ -64,7 +76,7 @@ public class ProjectEditorWindow extends JFrame {
 	private Project project;
 	private JList<ManagedSprite> managedSpritesList;
 	private JList<CombinedSprite> stripesList;
-	private ImagePanel spriteViewerPanel;
+	private SpriteViewerPanel spriteViewerPanel;
 	private JList<Sprite> tilesList;
 	private JPanel managedSpriteDetails;
 	private JPanel tilesPanel;
@@ -91,6 +103,7 @@ public class ProjectEditorWindow extends JFrame {
 	JFileChooser modGraphicsFileChooser;
 	JFileChooser workingFileDir;
 	private JPanel luaPanel;
+	private JCheckBox chckbxShowBackground;
 
 	/**
 	 * Launch the application.
@@ -109,6 +122,7 @@ public class ProjectEditorWindow extends JFrame {
 	}
 
 	public void updateTilesList() {
+		if (tiles==null) return;
 		clearTilesList();
 		DefaultListModel<Sprite> lm = (DefaultListModel<Sprite>) tilesList.getModel();
 		for (Sprite sprite : tiles) {
@@ -150,6 +164,8 @@ public class ProjectEditorWindow extends JFrame {
 
 	public void updateManagedSpriteDetails() {
 		if (selectedSprite != null) {
+			tiles = new ArrayList<Sprite>();
+			stripes = new ArrayList<CombinedSprite>();
 			modAssetPathField.setText(selectedSprite.getModAssetPath());
 			workingAssetPathField.setText(selectedSprite.getWorkingAssetPath());
 			luaLibPathField.setText(selectedSprite.getLuaLibPath());
@@ -158,12 +174,15 @@ public class ProjectEditorWindow extends JFrame {
 			filePatternText.setText(selectedSprite.getFilePattern());
 			spriteTypeComboBox.setSelectedItem(selectedSprite.getType());
 			spriteViewerPanel.setImage(null);
+			luaLibTextArea.setText("");
+			luaString = "";
 			clearTilesList();
 			clearStripesList();
 
 		} else {
 
 			clearManagedSpriteDetails();
+			
 
 		}
 
@@ -174,10 +193,12 @@ public class ProjectEditorWindow extends JFrame {
 		workingAssetPathField.setText("");
 		luaLibPathField.setText("");
 		itemNameField.setText("");
+		luaLibTextArea.setText("");
 		managedspriteName.setText("");
 		filePatternText.setText("");
 		spriteTypeComboBox.setSelectedItem(null);
 		spriteViewerPanel.setImage(null);
+		luaString = "";
 		clearTilesList();
 		clearStripesList();
 
@@ -198,7 +219,6 @@ public class ProjectEditorWindow extends JFrame {
 
 	public void setTiles(List<Sprite> outSprites) {
 		this.tiles = outSprites;
-		updateTilesList();
 	}
 
 	public List<CombinedSprite> getStripes() {
@@ -207,7 +227,6 @@ public class ProjectEditorWindow extends JFrame {
 
 	public void setStripes(List<CombinedSprite> stripes) {
 		this.stripes = stripes;
-		updateStripesList();
 	}
 
 	public void clearStripesList() {
@@ -216,6 +235,7 @@ public class ProjectEditorWindow extends JFrame {
 	}
 
 	public void updateStripesList() {
+		if (stripes==null) return;
 		clearStripesList();
 		DefaultListModel<CombinedSprite> lm = (DefaultListModel<CombinedSprite>) stripesList.getModel();
 		for (CombinedSprite stripe : stripes) {
@@ -236,9 +256,9 @@ public class ProjectEditorWindow extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[] { 0, 0, 391, 0, 0 };
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 441, 0, 0 };
 		gbl_contentPane.rowHeights = new int[] { 406, 59, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 0.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.columnWeights = new double[] { 0.0, 0.0, 1.0, 1.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 0.0, 0.0, 1.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
 
@@ -716,7 +736,7 @@ public class ProjectEditorWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				try {
-					SpriteBuilder sb = new SpriteBuilder(selectedSprite.getFullyQualifiedWorkingPath(project),
+					SpriteBuilder sb = new SpriteBuilder(selectedSprite, selectedSprite.getFullyQualifiedWorkingPath(project),
 							selectedSprite.getFilePattern(), ProjectEditorWindow.this);
 
 					sb.addPropertyChangeListener(new PropertyChangeListener() {
@@ -766,6 +786,20 @@ public class ProjectEditorWindow extends JFrame {
 		panel_9.add(horizontalStrut_1);
 
 		JButton btnSaveToMod = new JButton("Save to mod");
+		btnSaveToMod.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+				try {
+					project.saveToMod(stripes, luaString, selectedSprite);
+				} catch (ProjectSetupException e) {
+					UIUtils.showError(e, ProjectEditorWindow.this);
+					e.printStackTrace();
+				}
+				
+				
+			}
+		});
 		panel_9.add(btnSaveToMod);
 
 		Component horizontalGlue_2 = Box.createHorizontalGlue();
@@ -858,8 +892,8 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_scrollPane_5.gridy = 1;
 		luaPanel.add(scrollPane_5, gbc_scrollPane_5);
 		
-		JTextArea textArea = new JTextArea();
-		scrollPane_5.setViewportView(textArea);
+		luaLibTextArea = new JTextArea();
+		scrollPane_5.setViewportView(luaLibTextArea);
 
 		stripesPanel = new JPanel();
 		stripesPanel.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
@@ -971,14 +1005,33 @@ public class ProjectEditorWindow extends JFrame {
 
 		JPanel panel_7 = new JPanel();
 		GridBagConstraints gbc_panel_7 = new GridBagConstraints();
-		gbc_panel_7.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_7.fill = GridBagConstraints.BOTH;
 		gbc_panel_7.gridx = 0;
 		gbc_panel_7.gridy = 0;
 		tileViewPanel.add(panel_7, gbc_panel_7);
+		panel_7.setLayout(new BoxLayout(panel_7, BoxLayout.X_AXIS));
+		
+		Component horizontalStrut_3 = Box.createHorizontalStrut(20);
+		panel_7.add(horizontalStrut_3);
 
 		JLabel lblSprite = new JLabel("Sprite");
 		panel_7.add(lblSprite);
+		
+		Component horizontalGlue_3 = Box.createHorizontalGlue();
+		panel_7.add(horizontalGlue_3);
+		
+		chckbxShowBackground = new JCheckBox("Show Background");
+		chckbxShowBackground.setSelected(true);
+		chckbxShowBackground.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent arg0) {
+				spriteViewerPanel.setDrawBackground(chckbxShowBackground.isSelected());
+			}
+		});
+
+		panel_7.add(chckbxShowBackground);
+		
+		Component horizontalStrut_4 = Box.createHorizontalStrut(20);
+		panel_7.add(horizontalStrut_4);
 
 		Component horizontalStrut_2 = Box.createHorizontalStrut(200);
 		GridBagConstraints gbc_horizontalStrut_2 = new GridBagConstraints();
@@ -994,9 +1047,126 @@ public class ProjectEditorWindow extends JFrame {
 		gbc_scrollPane_4.gridy = 2;
 		tileViewPanel.add(scrollPane_4, gbc_scrollPane_4);
 
-		spriteViewerPanel = new ImagePanel();
+		spriteViewerPanel = new SpriteViewerPanel();
 		scrollPane_4.setViewportView(spriteViewerPanel);
 
+	}
+
+	public void processSprites() {
+		
+		List<Sprite> sprites = tiles;
+		tiles = new ArrayList<Sprite>();
+		
+		IconWorker<Sprite> ico = new IconWorker<Sprite>(sprites, tiles, this);
+		
+
+		ico.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if ("progress".equals(evt.getPropertyName())) {
+					progressBar.setValue((Integer) evt.getNewValue());
+				}
+			}
+		});
+		
+		
+		ico.execute();
+	}
+
+	public void processStripeIcons() {
+		
+		try {
+			updateLuaLib();
+		} catch (ProjectSetupException e) {
+			UIUtils.showError(e, this);
+			e.printStackTrace();
+		}
+		
+		List<CombinedSprite> tStripes = stripes;
+		stripes = new ArrayList<CombinedSprite>();
+		
+		IconWorker<CombinedSprite> ico = new IconWorker<CombinedSprite>(tStripes, stripes, this);
+		
+
+		ico.addPropertyChangeListener(new PropertyChangeListener() {
+
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if ("progress".equals(evt.getPropertyName())) {
+					progressBar.setValue((Integer) evt.getNewValue());
+				}
+			}
+		});
+		
+		
+		ico.execute();
+		
+	}
+	
+	String luaLib = new String();
+	private JTextArea luaLibTextArea;
+	private String luaString;
+	
+	
+	public void updateLuaLib() throws ProjectSetupException{
+		
+		if (stripes.size()==0) throw new ProjectSetupException("No Stripes, would generate invalid lua");
+		
+		
+		
+		System.out.println("Rebuilding luaLib");
+		String stripeTemplate;
+		String animationTemplate;
+		try {
+			stripeTemplate = IOUtils.toString(ProjectEditorWindow.class.getResourceAsStream("/stripe.luatemplate"));
+			animationTemplate = IOUtils.toString(ProjectEditorWindow.class.getResourceAsStream("/animation.luatemplate"));
+		} catch (IOException e) {
+			throw new ProjectSetupException("", e);
+		}
+		
+		String stripesLua = new String();
+		int framecount = 0;
+		for (CombinedSprite combinedSprite : stripes) {
+			framecount+=combinedSprite.getSprites().size();
+			System.out.println("luaLib processing for stripe: "+combinedSprite.getFile().getName());
+			String stripeTemplateCopy = stripeTemplate;
+			Map<String, String> values = new HashMap<String, String>();
+			values.put("modname", project.getProjectInfo().name);
+			values.put("stripefile",combinedSprite.getParent().getModAssetPath()+"/"+combinedSprite.getFile().getName());
+			values.put("widthinframes", 1+"");
+			values.put("heightinframes", combinedSprite.getSprites().size()+"");
+			StrSubstitutor sub = new StrSubstitutor(values);
+			stripesLua+=sub.replace(stripeTemplateCopy);
+		}
+		
+		Map<String, String> values = new HashMap<String, String>();
+		String functionName = selectedSprite.getItemName()
+					.replaceAll("1", "_One_")
+					.replaceAll("2", "_Two_")
+					.replaceAll("3", "_Three_")
+					.replaceAll("4", "_Four_")
+					.replaceAll("5", "_Five_")
+					.replaceAll("6", "_Six_")
+					.replaceAll("7", "_Seven_")
+					.replaceAll("8", "_Eight_")
+					.replaceAll("9", "_Nine_")
+					.replaceAll("0", "_Zero_")
+					.replaceAll("[^a-zA-Z0-9]", "_");
+					
+		values.put("functionname", functionName);
+		values.put("width", stripes.get(0).getSprites().get(0).getImage().getWidth()+"");
+		values.put("height", stripes.get(0).getSprites().get(0).getImage().getHeight()+"");
+		values.put("framecount", 1+"" );
+		values.put("directioncount", framecount+"");
+		values.put("shiftx", 0+"");
+		values.put("shifty", 0+"");
+		values.put("stripeslist", stripesLua);
+		
+		StrSubstitutor sub = new StrSubstitutor(values);
+		
+		luaString = sub.replace(animationTemplate);
+		luaLibTextArea.setText(luaString);
 	}
 
 }

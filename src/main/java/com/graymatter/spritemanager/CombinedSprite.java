@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import com.graymatter.spritemanager.entities.ManagedSprite;
 import com.graymatter.spritemanager.exceptions.ProjectSetupException;
 import com.graymatter.spritemanager.exceptions.SpriteBuilderException;
 import com.graymatter.spritemanager.util.SMFileUtils;
@@ -18,8 +19,12 @@ public class CombinedSprite extends Sprite {
 
 	private List<Sprite> sprites = new ArrayList<Sprite>();
 	
-	public CombinedSprite() throws SpriteBuilderException {
+	public List<Sprite> getSprites() {
+		return sprites;
+	}
 
+	public CombinedSprite(ManagedSprite parent) throws SpriteBuilderException {
+		this.parent = parent;
 	}
 
 	public void addSprite(Sprite sprite){
@@ -36,7 +41,7 @@ public class CombinedSprite extends Sprite {
 	}
 	
 	public void update(){
-		for (int i =0; i < sprites.size()-2; i++){
+		for (int i =0; i < sprites.size(); i++){
 			if (i==0) continue;
 			this.setImage(joinBufferedImageVerticial(this.getImage(), sprites.get(i).getImage()));
 			updateDimentions();
@@ -55,6 +60,11 @@ public class CombinedSprite extends Sprite {
 	    ImageIO.write(getImage(), "png", outputfile);
 	}
 
+	public void SaveBufferedImage(String directory, String name) throws IOException, SpriteBuilderException, ProjectSetupException{
+		File dir = SMFileUtils.createOrLoadDirectory(directory);
+		File outFile = new File(dir+"/"+name);
+		ImageIO.write(getImage(), "png", outFile);
+	}
 
 	
 	   public static BufferedImage joinBufferedImageHorizontal(BufferedImage img1,BufferedImage img2) {

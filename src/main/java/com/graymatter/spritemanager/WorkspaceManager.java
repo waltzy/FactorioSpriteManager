@@ -14,7 +14,7 @@ public class WorkspaceManager {
 	private File workspaceFile; 
 	private WorkspaceManager() throws ProjectSetupException{
 		workspaceFile = new File("./workspaces.json");
-		SMFileUtils.ensureJson(workspaceFile, new Workspaces());
+		SMFileUtils.ensureFile(workspaceFile, new Workspaces());
 		reload();
 	}
 	

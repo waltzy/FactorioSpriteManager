@@ -1,0 +1,5 @@
+        {
+          filename = "__${modname}__/${stripefile}",
+          width_in_frames = ${widthinframes},
+          height_in_frames = ${heightinframes},
+        },

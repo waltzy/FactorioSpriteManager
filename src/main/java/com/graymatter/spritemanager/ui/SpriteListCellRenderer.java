@@ -19,7 +19,7 @@ import com.graymatter.spritemanager.Sprite;
 /** A FileListCellRenderer for a File. */
 public class SpriteListCellRenderer extends DefaultListCellRenderer {
 
-	private static final int ICON_MAX_WIDTH = 40;
+	public static final int ICON_MAX_WIDTH = 40;
 	private static final long serialVersionUID = -7799441088157759804L;
 	private FileSystemView fileSystemView;
 	private JLabel label;
@@ -38,20 +38,9 @@ public class SpriteListCellRenderer extends DefaultListCellRenderer {
 	public Component getListCellRendererComponent(@SuppressWarnings("rawtypes") JList list, Object value, int index,
 			boolean selected, boolean expanded) {
 
-		File file = ((Sprite) value).getFile();
-		try {
-			BufferedImage image = ImageIO.read(file);
-			int x = image.getWidth();
-			float xpc = (float) ICON_MAX_WIDTH / (float) x;
-			int y = (int) (image.getHeight() * xpc);
-
-			label.setIcon(new ImageIcon(image.getScaledInstance(40, y, Image.SCALE_FAST)));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		label.setText(fileSystemView.getSystemDisplayName(file));
-		label.setToolTipText(file.getPath());
+		
+		label.setText(fileSystemView.getSystemDisplayName(((Sprite)value).getFile()));
+		label.setIcon(new ImageIcon(((Sprite)value).getIcon()));;
 
 		if (selected) {
 			label.setBackground(backgroundSelectionColor);
